@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Oleo+Script:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Teko:400,700" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+    <title>welcome {{user.first_name}}</title>
+</head>
+<body>
+        <!-- 8888888888888888888====================DDDDDDDDDDDDDDDDDD -->
+        <section id="contact">
+                <div class="section-content">
+                    <h1 class="section-header">Add a <span class="content-header wow fadeIn " data-wow-delay="0.2s" data-wow-duration="2s"> Splendid Quote</span></h1>
+                    <h3>Welcome {{user.first_name}} / <a href="/logout">logout</a><br>
+                    <h3>Add a quote</h3>
+                </div>
+                <div class="contact-section">
+                <div class="container">
+                    <form action="/add_cite" method="post">
+                        {% csrf_token %}
+                        <div class="col-md-6 form-line">
+                              <div class="form-group">
+                                  <label for="exampleInputUsername" style=" font-size:27px;">Quoted by</label>
+                                <input type="text" class="form-control" id="" placeholder=" Author" name="quoter">
+                              </div>
+                          <div class="col-md-12">
+                              <div class="form-group">
+                                  <label for ="description" style=" font-size:28px;"> Add a quote</label>
+                                   <textarea  class="form-control" id="description" placeholder="Enter Your Quote" name="quote"></textarea>
+                              </div>
+                              <div>
+    
+                                  <button type="submit" class="btn btn-default submit"><i class="fa fa-paper-plane" aria-hidden="true"></i>  Add Quote</button>
+                              </div>
+                              
+                        </div>
+                    </form>
+                    {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                </div>
+
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    <!-- 8888888888888888888====================DDDDDDDDDDDDDDDDDD -->
+    
+
+    <p style=" text-indent:9px; font-size:26px;">{{user.first_name}}'s' Favorites:</p>
+    <div id="quotes" style=" height:352px; width: 600PX; margin-bottom: 40px; margin-left: 575px; border: 2px rgb(92, 92, 92) solid; background: #ffffff; ">
+	<div id="quotes" style="overflow:scroll; height:350px;">
+	  {% for favorite in favorites %}
+	  		<div class="one_quote" style="width: 550px; color:black; text-indent:18px;">
+			    <p class="quotepee" style="text-indent:18px;">{{favorite.quoter}}:{{favorite.quote}}</p>
+			   	<p class="quotepee" style="text-indent:18px;">posted by: <a href="/users/{{favorite.uploader.id}}"> {{favorite.uploader.first_name}}</a></p>
+                <p style="text-indent:18px;"><a href="/remove_favorite/{{favorite.id}}" class="quotepee"> Remove from My List</a></p>
+                <hr style="margin-left: 18px;">
+			</div>
+	  {% endfor %}
+     </div>
+    </div>
+    <p style=" text-indent:9px; font-size:26px;">Quotable Quotes:</p>
+    <div class="backgroundwall" style=" height:350px; width: 650PX; margin-bottom: 40px; border: 2px rgb(92, 92, 92) solid; background: #ffffff; ">
+	<div id="quotes" style="overflow:scroll; height:300px; width: 600PX; margin-left: 23px; margin-top: 15px ">
+
+        {% for quote in cite %}
+        <div class="form-group" style=" color:black;">
+			<div class = "one_quote" style="width: 600PX">
+				<p class="quotepee">   {{quote.quoter}} : {{quote.quote}}</p>
+				<p class="quotepee">   Posted by: <a href="/users/{{quote.uploader.id}}"> {{quote.uploader.first_name}}</a></p>
+                <a href="/add_favorite/{{quote.id}}" class="quotepee">   Add to My List</a>
+                <hr>
+			</div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+<!-- 
+    <fieldset>
+        <legend>My Favorited Quotes</legend>
+        <table border=1>
+            <tr>
+                <th>quoterr</th>
+                <th>quote</th>
+                <th>remove from my list</th>
+                <th>uplaoder</th>
+            </tr>
+            {% for cite in cite %}
+            {% if user.id == cite.uploader_id%}
+            <tr>
+                    <td><a href="/home/{{cite.id}}">{{cite.quoter}}</a></td>
+                    <td>{{cite.quote}}</td>
+                    <td>{{cite.uplaoder.first_name}}</td>
+                    <td>{{cite.date_to.date}}</td>
+
+{% endif %}
+{% endfor %}
+</table>
+</fieldset>
+
+<fieldset>
+    <legend>Quotes</legend>
+    <table border=1>
+        <tr>
+            <th>quoterr</th>
+            <th>quote</th>
+            <th>add from my list</th>
+            <th>uplaoder</th>
+        </tr>
+        {% for cite in cite %}
+        {% if user.id != cite.uploader_id%}
+        <tr>
+                <td>{{cite.uploader.first_name}}</td>
+                <td><a href="/home/{{cite.id}}">{{cite.quoter}}</a></td>
+                <td>{{cite.quote}}</td>
+                <td><a href="/join/{{cite.id}}">join</a></td>
+
+{% endif %}
+{% endfor %}
+
+
+</table>
+</fieldset> -->
+
+    <!-- 8888888888888888888====================DDDDDDDDDDDDDDDDDD -->
+
+</section>
+</body>
+</html>
